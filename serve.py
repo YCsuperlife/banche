@@ -9,28 +9,28 @@ def init_db():
     con = db.connect('user.db')
     cur = con.cursor()
     try:
-        cur.execute('create table user (name varchar(100), lon varchar(100), lat varchar(100), addr varchar(100))')
+        cur.execute('create table user (name varchar(100), lon varchar(100), lat varchar(100), addr varchar(100), comment varchar(500))')
     except:
-        print 'table existed'
+        print('table existed')
         pass
 
 def get_user_list():
     con = db.connect('user.db')
     cur = con.cursor()
 
-    cur.execute("select name,lon,lat,addr from user")
+    cur.execute("select name,lon,lat,addr,comment from user")
     return cur.fetchall()
 
-def update_user(name, lon, lat, addr):
+def update_user(name, lon, lat, addr,comment):
     con = db.connect('user.db')
     cur = con.cursor()
 
     # 看看用户存在不
     cur.execute("select * from user where name='%s'" % (name))
     if len(cur.fetchall()) > 0:
-        cur.execute("update user set lon='%s',lat='%s',addr='%s' where name='%s'" % (lon, lat, addr, name))
+        cur.execute("update user set lon='%s',lat='%s',addr='%s',comment='%s' where name='%s'" % (lon, lat, addr, comment, name))
     else:
-        cur.execute("insert into user values('%s','%s','%s','%s')"%(name,lon,lat,addr))
+        cur.execute("insert into user values('%s','%s','%s','%s','%s')"%(name,lon,lat,addr,comment))
     con.commit()
 
 
@@ -50,9 +50,9 @@ def api_adduser():
     lon = request.forms.get('lon')
     lat = request.forms.get('lat')
     addr = request.forms.get('address')
+    comment = request.forms.get('comment')
 
-
-    update_user(name,lon,lat,addr)
+    update_user(name,lon,lat,addr,comment)
     return "上传成功"
 
 @route('/api/list')

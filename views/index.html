@@ -58,13 +58,14 @@
                     经度: <input type="text" id="lon" readonly="readonly" /><br>
                     纬度: <input type="text" id="lat" readonly="readonly" /><br>
                     地址: <input type="text" id="address" readonly="readonly" /><br>
+                    备注: <input type="text" id="comment" /><br>
                     </li>
                     <li>
-                    <a id="send" href="javascript:void(0);">发送</a>
-                    <a href="/result">查看结果</a>
+                    <a id="send" href="javascript:void(0);">更新个人信息</a>
                     <p>
                     说明: <br>
-                    经纬度和地址请在地图上单击鼠标, 会自动填写.
+                    1. 经纬度和地址请在地图上单击鼠标, 会自动填写.<br>
+                    2. 数据是以人名为索引的, 所以姓名最好加上邮件里的数字, 以便与同名同事区分开, 否则会将同事的位置给修改掉.</br>
                     </p>
                     </li>
                 </ul>
@@ -101,7 +102,7 @@ function autofill(e) {
             $("#lon").val(e.point.lng);
             $("#lat").val(e.point.lat);
             $("#address").val(addComp.province + ", " + addComp.city + ", " + addComp.district + ", " + addComp.street + ", " + addComp.streetNumber);
-            });
+        });
 }
 
 $("#send").click(function() {
@@ -109,6 +110,7 @@ $("#send").click(function() {
         var lon = $("#lon").val();
         var lat = $("#lat").val();
         var addr = $("#address").val();
+        var comment = $("#comment").val();
         if (name == "" || lon == "" || lat == "") {
             alert("成员信息不能为空");
         }
@@ -119,6 +121,7 @@ $("#send").click(function() {
                     lon: lon,
                     lat: lat,
                     address: addr,
+                    comment: comment,
                 },
                 function(data, status) {
                     if (status == "success") {
@@ -143,7 +146,7 @@ function loaddata() {
                 var li = ul.append('<li></li>');
                 li.append('<a href="javascript:void(0)" onclick="center(this);">'+users[i][0]+'</a>');
 
-                userlist[users[i][0]] = [users[i][1],users[i][2]];
+                userlist[users[i][0]] = [users[i][1],users[i][2],users[i][3],users[i][4]];
             }
         });
 }
@@ -162,6 +165,12 @@ function center(obj) {
     var d = userlist[$(obj).text()];
     var point = new BMap.Point(d[0],d[1]);
     map.centerAndZoom(point,18);
+
+    $("#username").val($(obj).text());
+    $("#lon").val(d[0]);
+    $("#lat").val(d[1]);
+    $("#address").val(d[2]);
+    $("#comment").val(d[3]);
 }
 
 
